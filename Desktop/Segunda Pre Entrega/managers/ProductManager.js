@@ -15,6 +15,8 @@ class ProductManager {
 
 async getAll(query,limite,sort) {
 
+  
+
   let filter = {};
   let limit = 10
 
@@ -32,30 +34,33 @@ async getAll(query,limite,sort) {
     .sort({ price: sort })
     .limit(limit)
     .lean();
+   
 
-    return products
+
+    const {totalPages, PrevPage, nextPage, page, hasPrevPage, hasNextPage, prevLink, NextLink} = await productModel.paginate({}, { limit:10, page:1, lean: true })
+   console.log(totalPages, PrevPage, nextPage, page, hasPrevPage, hasNextPage, prevLink, NextLink)
+    return { products, totalPages, PrevPage, nextPage, page, hasPrevPage, hasNextPage, prevLink, NextLink}
+ 
     
   }
 
-  // paginacion
-
-  getAllPaged(page = 1) {
-    return productModel.paginate({}, { limit:10, page, lean: true })
-  }
-
-
-
-
-
-
+  
 
 
   //Obtener Productos por id
 
   async getById(id) {
-    const products = await productModel.find({ _id: id })
 
-    return products[0]  // regresa el primero de la lista
+    try {
+      const products = await productModel.find({ _id: id })
+      return products[0]  // regresa el primero de la lista
+
+
+    }
+    catch (error) {
+      console.error("Error al obtener el producto:", error.message);
+      return "producto no encontrado"; 
+    }
   }
 
  
@@ -85,6 +90,13 @@ async getAll(query,limite,sort) {
       return result
    
   }
+
+  // paginacion
+
+  getAllPaged(page = 1) {
+    return productModel.paginate({}, { limit:10, page, lean: true })
+  }
+
 
 
 }

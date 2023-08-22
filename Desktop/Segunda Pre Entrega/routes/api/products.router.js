@@ -28,12 +28,24 @@ router.get('/', async (req, res) => {
  
    
    
-    const products = await productManager.getAll(query,limite, sort)
+    const {products, totalPages, PrevPage, nextPage, page, hasPrevPage, hasNextPage, prevLink, NextLink } = await productManager.getAll(query,limite, sort)
   
-  
+   const info = {
+    totalPages: totalPages,
+    PrevPage: PrevPage,
+    nextPage: nextPage,
+    page: page,
+    hasPrevPage: hasPrevPage,
+    hasNextPage: hasNextPage,
+    prevLink:prevLink,
+    nextlink: NextLink
+  }
    
 
-     res.send(products);
+     res.send({
+      status : 'success',
+      payload: products,
+      info});
   
 })
 
@@ -46,7 +58,7 @@ router.get('/', async (req, res) => {
 
 
 
-// Obtener productos por id ==> Get http://localhost:8080/api/products/12
+// Obtener productos por id ==> Get http://localhost:8080/api/products/64d03838f0cbca770cd84719
 
 
 router.get('/:id', async (req, res) => {
@@ -74,6 +86,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) =>  {
   let body = req.body
 
+  
+
+  
   if(!body.title || !body.descripcion || !body.price || !body.code || !body.stock || !body.status || !body.category){
     res.status(400).send("Debe enviar todos los campos")
   } else{
@@ -83,6 +98,8 @@ router.post('/', async (req, res) =>  {
  
 
   }
+
+  
 
 })
 
